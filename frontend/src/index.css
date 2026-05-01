@@ -1,0 +1,307 @@
+@import "tailwindcss";
+
+/* ── SCALA GLOBALE: riduce il font-size root al 90% così a zoom browser 100%
+   l'app appare equivalente a zoom 90%. Tailwind usa rem per font E spacing,
+   quindi font, padding di bottoni, gap e tabelle si scalano proporzionalmente. */
+html { font-size: 90%; }
+
+/* ── DASHBOARD GRID: disabilita le transizioni di RGL così non si vede la
+   slide-in dei widget al ri-mount/show del tab ─────────────────────────────── */
+.react-grid-item, .react-grid-item.cssTransforms { transition: none !important; }
+
+/* ── TABELLE: classi condivise per uniformare tutte le tabelle ───────────── */
+@layer components {
+  .tbl-card         { @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-fit; }
+  .tbl              { @apply text-base; }
+  .tbl-thead        { @apply bg-gray-100 border-b border-gray-300; }
+  .tbl-thead > tr   { @apply divide-x divide-gray-200; }
+  .tbl-tbody        { @apply divide-y divide-gray-200; }
+  .tbl-tbody > tr   { @apply hover:bg-gray-50 transition-colors divide-x divide-gray-200; }
+  .tbl-row-selected { @apply bg-blue-50; }
+  .tbl-th           { @apply text-left px-3 text-xs font-medium text-gray-700 uppercase select-none; padding-block: calc(var(--spacing) * 0.6); }
+  .tbl-th-sort      { @apply cursor-pointer hover:bg-gray-100; }
+  .tbl-th-drag      { @apply cursor-grab; }
+  .tbl-th-cb        { @apply px-3 w-8; padding-block: calc(var(--spacing) * 0.6); }
+  .tbl-td           { @apply px-3; padding-block: calc(var(--spacing) * 0.2); }
+  .tbl-td-cb        { @apply px-3 w-8; padding-block: calc(var(--spacing) * 0.2); }
+  .tbl-td-id        { @apply px-3 text-xs text-gray-400 font-mono; padding-block: calc(var(--spacing) * 0.2); }
+  .tbl-bulkbar      { @apply flex items-center gap-3 px-3 py-2 bg-blue-50 border-b border-blue-100; }
+  .tbl-pagination   { @apply flex items-center justify-between px-4 py-3 border-t border-gray-100; }
+  .tbl-empty        { @apply text-center py-6 text-gray-400; }
+  .tbl-count        { @apply text-xs text-gray-500 mb-1.5; }
+  .filtro-attivo    { @apply bg-blue-50 border-blue-300 ring-1 ring-blue-200; }
+}
+
+/* ── INPUT NUMBER SENZA FRECCETTE ─────────────────────────────────────────── */
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ── INPUT EMBEDDED IN TABLE CELL: nessun bordo, sfondo trasparente,
+      sottile hover per indicare l'editabilità ─────────────────────────────── */
+.cell-input:hover:not(:focus):not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.025);
+}
+
+/* ── FONT SELEZIONABILI ────────────────────────────────────────────────────── */
+html.font-inter    { font-family: 'Inter', system-ui, sans-serif; }
+html.font-jakarta  { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+html.font-space    { font-family: 'Space Grotesk', system-ui, sans-serif; }
+html.font-atkinson { font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; }
+html.font-lexend   { font-family: 'Lexend', system-ui, sans-serif; }
+html.font-andika   { font-family: 'Andika', system-ui, sans-serif; }
+
+/* ── ALTO CONTRASTO ────────────────────────────────────────────────────────── */
+
+/* Sovrascrive le variabili CSS di Tailwind v4 usate da divide-*, border-* */
+.alto-contrasto {
+  --color-gray-200: #000000;
+  --color-gray-300: #000000;
+}
+
+/* Focus universale */
+.alto-contrasto *:focus-visible {
+  outline: 3px solid #ffcc00 !important;
+  outline-offset: 3px !important;
+  box-shadow: none !important;
+}
+
+/* Sfondi principali */
+.alto-contrasto .bg-white,
+.alto-contrasto .bg-gray-50,
+.alto-contrasto .bg-gray-100,
+.alto-contrasto .bg-gray-200 {
+  background-color: #ffffff !important;
+}
+
+/* Testo grigio → nero */
+.alto-contrasto .text-gray-300,
+.alto-contrasto .text-gray-400,
+.alto-contrasto .text-gray-500,
+.alto-contrasto .text-gray-600,
+.alto-contrasto .text-gray-700,
+.alto-contrasto .text-gray-800,
+.alto-contrasto .text-gray-900 {
+  color: #000000 !important;
+}
+
+/* Bordi → nero */
+.alto-contrasto .border-gray-100,
+.alto-contrasto .border-gray-200,
+.alto-contrasto .border-gray-300 {
+  border-color: #000000 !important;
+}
+
+/* Dividers nelle tabelle */
+.alto-contrasto .divide-gray-200 > * + * {
+  border-color: #000000 !important;
+}
+.alto-contrasto tbody > tr + tr {
+  border-top: 1px solid #000000 !important;
+}
+.alto-contrasto tbody > tr > td + td,
+.alto-contrasto thead > tr > th + th {
+  border-left-color: #000000 !important;
+}
+
+/* Intestazioni tabella → sfondo nero, testo bianco */
+.alto-contrasto thead {
+  background-color: #000000 !important;
+}
+.alto-contrasto thead th {
+  color: #ffffff !important;
+  border-color: #444444 !important;
+}
+
+/* Input, select, textarea */
+.alto-contrasto input,
+.alto-contrasto select,
+.alto-contrasto textarea {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+.alto-contrasto input::placeholder,
+.alto-contrasto textarea::placeholder {
+  color: #555555 !important;
+}
+
+/* Pulsanti blu */
+.alto-contrasto .bg-blue-600 {
+  background-color: #00008b !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+.alto-contrasto .hover\:bg-blue-700:hover {
+  background-color: #000066 !important;
+}
+
+/* Pulsanti rossi */
+.alto-contrasto .bg-red-600 {
+  background-color: #8b0000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Pulsanti verdi */
+.alto-contrasto .bg-green-600 {
+  background-color: #005500 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Pulsanti neutri */
+.alto-contrasto .bg-gray-100:is(button, [role="button"]),
+.alto-contrasto button.bg-gray-100 {
+  background-color: #e0e0e0 !important;
+  color: #000000 !important;
+  border: 1px solid #000000 !important;
+}
+
+/* Badge/chip colorati → contorno nero, sfondo bianco */
+.alto-contrasto .bg-green-100,
+.alto-contrasto .bg-blue-100,
+.alto-contrasto .bg-red-100,
+.alto-contrasto .bg-orange-100,
+.alto-contrasto .bg-amber-50,
+.alto-contrasto .bg-yellow-100,
+.alto-contrasto .bg-purple-100 {
+  background-color: #ffffff !important;
+  border: 1px solid #000000 !important;
+}
+.alto-contrasto .text-green-700,
+.alto-contrasto .text-blue-700,
+.alto-contrasto .text-red-700,
+.alto-contrasto .text-orange-700,
+.alto-contrasto .text-amber-800,
+.alto-contrasto .text-purple-700 {
+  color: #000000 !important;
+}
+
+/* Riga selezionata con checkbox */
+.alto-contrasto .bg-blue-50 {
+  background-color: #ffffcc !important;
+  outline: 2px solid #000000 !important;
+}
+
+/* Hover righe tabella */
+.alto-contrasto .hover\:bg-gray-50:hover,
+.alto-contrasto .tbl-tbody > tr:hover {
+  background-color: #e8e8e8 !important;
+}
+
+/* Barra bulk-select */
+.alto-contrasto .bg-blue-50:not(tr),
+.alto-contrasto .tbl-bulkbar {
+  background-color: #eeeeff !important;
+  border-bottom: 2px solid #000000 !important;
+}
+
+/* Riga selezionata con classe condivisa */
+.alto-contrasto .tbl-tbody > tr.tbl-row-selected {
+  background-color: #ffffcc !important;
+  outline: 2px solid #000000 !important;
+}
+
+/* Card tabella con bordo nero in alto contrasto */
+.alto-contrasto .tbl-card {
+  border-color: #000000 !important;
+}
+
+/* Sidebar → sfondo nero puro, testo bianco */
+.alto-contrasto aside {
+  background-color: #000000 !important;
+  border-right: 2px solid #ffffff !important;
+}
+.alto-contrasto aside,
+.alto-contrasto aside *,
+.alto-contrasto aside .text-gray-200,
+.alto-contrasto aside .text-gray-300,
+.alto-contrasto aside .text-gray-400,
+.alto-contrasto aside .text-white,
+.alto-contrasto aside button,
+.alto-contrasto aside p,
+.alto-contrasto aside span {
+  color: #ffffff !important;
+}
+.alto-contrasto aside .border-gray-700 {
+  border-color: #ffffff !important;
+}
+.alto-contrasto aside hr {
+  border-color: #ffffff !important;
+}
+.alto-contrasto aside .hover\:bg-gray-800:hover,
+.alto-contrasto aside .hover\:bg-gray-700:hover {
+  background-color: #333333 !important;
+}
+.alto-contrasto aside button[aria-current="page"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #ffffff !important;
+  outline: 2px solid #ffcc00 !important;
+}
+.alto-contrasto aside button[aria-current="page"] * {
+  color: #000000 !important;
+}
+
+/* Tab strip */
+.alto-contrasto [role="tablist"] {
+  background-color: #cccccc !important;
+  border-bottom: 2px solid #000000 !important;
+}
+.alto-contrasto [role="tab"] {
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+  background-color: #dddddd !important;
+}
+.alto-contrasto [role="tab"][aria-selected="true"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-bottom: 2px solid #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* Modale/dialog */
+.alto-contrasto [role="dialog"] > div {
+  border: 3px solid #000000 !important;
+}
+
+/* Highlight ricerca */
+.alto-contrasto mark {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  border: 1px solid #aa8800 !important;
+}
+
+/* Stato attivo/inattivo badge */
+.alto-contrasto .bg-green-100.text-green-700,
+.alto-contrasto .bg-red-100.text-red-700 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #000000 !important;
+}
+
+/* Paginazione */
+.alto-contrasto .border-gray-300:is(button) {
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Visually hidden utility per caption accessibili */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16
+    container_name: dental_db
+    restart: always
+    environment:
+      POSTGRES_USER: dental_user
+      POSTGRES_PASSWORD: dental_pass
+      POSTGRES_DB: dental_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: dental_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://dental_user:dental_pass@db:5432/dental_db
+      SECRET_KEY: cambia_questa_chiave_in_produzione
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    container_name: dental_frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://backend:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
